@@ -12,27 +12,54 @@ public class School {
         int studentSize = sc.nextInt();
         sc.nextLine();  // Consume newline
 
-        // Input student details
+        // Collect student data
         for (int i = 0; i < studentSize; i++) {
             System.out.println("Enter name of student: ");
             String name = sc.nextLine();
 
-            int level = getValidLevel(sc);
-            int matricNumber = getValidMatricNumber(sc);
+            // Validate student level
+            System.out.println("Enter student level: ");
+            int level = sc.nextInt();
 
-            // Add the student's info to the database
+            if (level != 100 && level != 200 && level != 300 && level != 400 && level != 500 && level != 600) {
+                System.out.println("Invalid Level. Program will terminate.");
+                System.exit(0);
+            }
+            sc.nextLine();  // Consume newline
+
+            // Validate matric number
+            System.out.println("Enter Matric number: ");
+            int matricNumber = sc.nextInt();
+
+            if (matricNumber < 180000 || matricNumber > 235000) {
+                System.out.println("Invalid Matric Number. Program will terminate.");
+                System.exit(0);
+            }
+            sc.nextLine();  // Consume newline
+
+            // Feature: Add the student's info to the database
             studentDatabase.add(new Student(name, level, matricNumber));
         }
 
         // Display all valid student data
-        displayStudents(studentDatabase);
+        System.out.println("\n----- Student Database -----");
+        for (Student student : studentDatabase) {
+            System.out.println(student);  // Uses the overridden toString() method
+        }
 
-        // Menu for editing, deleting, or adding students
-        System.out.println("\n-----------------------------");
-        System.out.println("Do you want to make changes? (yes/no)");
-        if (sc.nextLine().equalsIgnoreCase("yes")) {
+        // Forever loop for changes
+        while (true) {
+            System.out.print("\nDo you want to make changes? (yes/no): ");
+            String choice = sc.nextLine();
 
-            System.out.println("1. Delete Student");
+            // If the user says "no", break the loop and exit
+            if (choice.equalsIgnoreCase("no")) {
+                System.out.println("Exiting program...");
+                break;  // Exit the loop
+            }
+
+            // Display options for editing, deleting, or adding students
+            System.out.println("\n1. Delete Student");
             System.out.println("2. Edit Student");
             System.out.println("3. Add Student");
 
@@ -40,147 +67,83 @@ public class School {
             sc.nextLine();  // Consume newline
 
             switch (selection) {
-                case 1:  // Delete Student
-                    deleteStudent(sc, studentDatabase);
+                case 1: // Deleting a student
+                    System.out.println("Enter the Matric number of the student to remove: ");
+                    int matricNumberToRemove = sc.nextInt();
+                    sc.nextLine();
+
+                    boolean studentRemoved = false;
+                    for (Student student : studentDatabase) {
+                        if (student.getMatricNumber() == matricNumberToRemove) {
+                            studentDatabase.remove(student);
+                            System.out.println("Student with Matric number " + matricNumberToRemove + " removed.");
+                            studentRemoved = true;
+                            break;
+                        }
+                    }
+                    if (!studentRemoved) {
+                        System.out.println("No student found with that Matric number.");
+                    }
                     break;
 
-                case 2:  // Edit Student
-                    editStudent(sc, studentDatabase);
+                case 2: // Editing a student
+                    System.out.println("Enter the Matric number of the student to edit: ");
+                    int matricNumberToEdit = sc.nextInt();
+                    sc.nextLine();
+
+                    boolean studentFound = false;
+                    for (Student student : studentDatabase) {
+                        if (student.getMatricNumber() == matricNumberToEdit) {
+                            System.out.println("Enter new name of student: ");
+                            String newName = sc.nextLine();
+
+                            System.out.println("Enter new level: ");
+                            int newLevel = sc.nextInt();
+                            sc.nextLine();  // Consume newline
+
+                            System.out.println("Enter new Matric number: ");
+                            int newMatricNumber = sc.nextInt();
+                            sc.nextLine();  // Consume newline
+
+                            // Update student info
+                            student.setName(newName);
+                            student.setLevel(newLevel);
+                            student.setMatricNumber(newMatricNumber);
+                            System.out.println("Student details updated.");
+                            studentFound = true;
+                            break;
+                        }
+                    }
+                    if (!studentFound) {
+                        System.out.println("No student found with that Matric number.");
+                    }
                     break;
 
-                case 3:  // Add New Student
-                    addStudent(sc, studentDatabase);
+                case 3: // Adding a new student
+                    System.out.println("Enter name of new student: ");
+                    String newName = sc.nextLine();
+
+                    System.out.println("Enter student level: ");
+                    int newLevel = sc.nextInt();
+                    sc.nextLine();
+
+                    System.out.println("Enter Matric number: ");
+                    int newMatricNumber = sc.nextInt();
+                    sc.nextLine();
+
+                    studentDatabase.add(new Student(newName, newLevel, newMatricNumber));
+                    System.out.println("New student added.");
                     break;
 
                 default:
-                    System.out.println("Invalid option.");
-                    break;
+                    System.out.println("Invalid selection. Please try again.");
             }
-        } else {
-            System.out.println("No changes made. Exiting...");
-        }
 
-        // Display updated student data
-        displayStudents(studentDatabase);
-    }
-
-    private static void displayStudents(ArrayList<Student> studentDatabase) {
-        System.out.println("\n----- Student Database -----");
-        for (Student student : studentDatabase) {
-            System.out.println(student);  // Uses the overridden toString() method
-        }
-    }
-
-    // Method to delete a student by matric number
-    private static void deleteStudent(Scanner sc, ArrayList<Student> studentDatabase) {
-        System.out.println("Enter the Matric number of the student to remove: ");
-        int matricNumberToRemove = sc.nextInt();
-        sc.nextLine();  // Consume newline
-        boolean studentRemoved = false;
-
-        // Find and remove the student
-        for (Student student : studentDatabase) {
-            if (student.getMatricNumber() == matricNumberToRemove) {
-                studentDatabase.remove(student);
-                System.out.println("Student with Matric number " + matricNumberToRemove + " removed.");
-                studentRemoved = true;
-                break;
+            // Display updated student data
+            System.out.println("\n----- Updated Student Database -----");
+            for (Student student : studentDatabase) {
+                System.out.println(student);
             }
         }
-
-        if (!studentRemoved) {
-            System.out.println("No student found with that Matric number.");
-        }
-    }
-
-    // Method to edit a student's information
-    private static void editStudent(Scanner sc, ArrayList<Student> studentDatabase) {
-        System.out.println("Enter the Matric number of the student to edit: ");
-        int matricNumberToEdit = sc.nextInt();
-        sc.nextLine();  // Consume newline
-        boolean studentFound = false;
-
-        // Find and edit the student
-        for (Student student : studentDatabase) {
-            if (student.getMatricNumber() == matricNumberToEdit) {
-                System.out.println("Editing student: " + student);
-
-                // Prompt for new name
-                System.out.println("Enter new name (or press Enter to keep " + student.getName() + "): ");
-                String newName = sc.nextLine();
-                if (!newName.isEmpty()) {
-                    student.setName(newName);
-                }
-
-                // Prompt for new level
-                System.out.println("Enter new level (or press Enter to keep " + student.getLevel() + "): ");
-                String newLevelInput = sc.nextLine();
-                if (!newLevelInput.isEmpty()) {
-                    int newLevel = Integer.parseInt(newLevelInput);
-                    student.setLevel(newLevel);
-                }
-
-                // Prompt for new matric number
-                System.out.println("Enter new matric number (or press Enter to keep " + student.getMatricNumber() + "): ");
-                String newMatricInput = sc.nextLine();
-                if (!newMatricInput.isEmpty()) {
-                    int newMatricNumber = Integer.parseInt(newMatricInput);
-                    student.setMatricNumber(newMatricNumber);
-                }
-
-                System.out.println("Student information updated.");
-                studentFound = true;
-                break;
-            }
-        }
-
-        if (!studentFound) {
-            System.out.println("No student found with that Matric number.");
-        }
-    }
-
-    // Method to add a new student to the database
-    private static void addStudent(Scanner sc, ArrayList<Student> studentDatabase) {
-        System.out.println("Enter name of student: ");
-        String name = sc.nextLine();
-
-        int level = getValidLevel(sc);
-        int matricNumber = getValidMatricNumber(sc);
-
-        // Add new student to the database
-        studentDatabase.add(new Student(name, level, matricNumber));
-        System.out.println("New student added.");
-    }
-
-    // Method to get a valid student level
-    private static int getValidLevel(Scanner sc) {
-        int level;
-        while (true) {
-            System.out.println("Enter student level: ");
-            level = sc.nextInt();
-            sc.nextLine();  // Consume newline
-            if (level == 100 || level == 200 || level == 300 || level == 400 || level == 500 || level == 600) {
-                break;
-            } else {
-                System.out.println("Invalid Level. Please enter a valid level (100, 200, 300, 400, 500, 600).");
-            }
-        }
-        return level;
-    }
-
-    // Method to get a valid matric number
-    private static int getValidMatricNumber(Scanner sc) {
-        int matricNumber;
-        while (true) {
-            System.out.println("Enter Matric number: ");
-            matricNumber = sc.nextInt();
-            sc.nextLine();  // Consume newline
-            if (matricNumber >= 180000 && matricNumber <= 235000) {
-                break;
-            } else {
-                System.out.println("Invalid Matric Number. Please enter a valid matric number (between 180000 and 235000).");
-            }
-        }
-        return matricNumber;
     }
 }
