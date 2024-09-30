@@ -9,6 +9,7 @@ public class Student {
         this.matricNumber = matricNumber;
     }
 
+    // Getter method
     public String getName() {
         return name;
     }
@@ -20,6 +21,20 @@ public class Student {
     public int getMatricNumber() {
         return matricNumber;
     }
+
+    // Setter method
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public void setMatricNumber(int matricNumber) {
+        this.matricNumber = matricNumber;
+    }
+
 
     // Override the toString method
     @Override
